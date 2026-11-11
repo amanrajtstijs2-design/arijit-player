@@ -3,125 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arijit Singh 70+ Non-Stop Hits</title>
+  <title>Arijit Singh Mega Player</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     body { background-color: #070b14; color: #f8fafc; font-family: system-ui, sans-serif; }
-    .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); }
+    .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); }
   </style>
 </head>
 <body class="flex justify-center items-center min-h-screen p-3 sm:p-6">
 
-  <!-- Mobile App Frame -->
-  <div class="w-full max-w-md glass rounded-3xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4 relative">
+  <div class="w-full max-w-md glass rounded-3xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4">
     
     <!-- Top Header -->
     <div class="flex justify-between items-center pt-1">
       <div>
         <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">5+ Hours Non-Stop</span>
-        <h1 class="text-xl font-black text-white">Arijit 70 Super Hits</h1>
+        <h1 class="text-xl font-black text-white">Arijit Special Player</h1>
       </div>
-      <span class="text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full font-medium flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Mega Jukebox
-      </span>
+      <a href="https://youtu.be/HB8HnAA_G2k" target="_blank" class="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full flex items-center gap-1">
+        <i class="fa-brands fa-youtube"></i> Open App
+      </a>
     </div>
 
-    <!-- Video Player Screen -->
+    <!-- Direct Embedded Video Frame -->
     <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-black">
-      <div id="youtube-player" class="w-full h-full"></div>
+      <iframe 
+        id="player-frame"
+        class="w-full h-full"
+        src="https://www.youtube.com/embed/HB8HnAA_G2k?playsinline=1&rel=0&modestbranding=1" 
+        title="Arijit Singh Non-Stop"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
     </div>
 
-    <!-- Track Information -->
-    <div class="flex justify-between items-center px-1">
-      <div class="truncate">
-        <h2 id="track-title" class="text-lg font-bold truncate text-white">Arijit Singh Specials</h2>
-        <p class="text-xs text-slate-400">Zee Music Company • 70 Hit Songs Non-Stop</p>
-      </div>
-      <div class="text-xs text-emerald-400 font-semibold bg-slate-900 border border-slate-700/80 px-2.5 py-1 rounded-lg">
-        5h 13m
-      </div>
+    <!-- Notice -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-300 flex items-start gap-2.5">
+      <i class="fa-solid fa-circle-info text-emerald-400 mt-0.5"></i>
+      <p>Gaana chalu karne ke liye <b>video screen ke center par tap karein</b>. Mobile security ki wajah se pehla tap screen par zaroori hota hai.</p>
     </div>
 
-    <!-- Music Controls -->
-    <div class="flex items-center justify-center gap-8 my-2">
-      <!-- 10 Sec Backward -->
-      <button onclick="seekBackward()" title="-10s" class="p-3 text-slate-400 hover:text-white transition active:scale-90">
-        <i class="fa-solid fa-rotate-left text-2xl"></i>
+    <!-- Alternative Non-Stop Collections -->
+    <div class="flex flex-col gap-2 mt-1">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-1">Other Working Non-Stop Hits</span>
+      
+      <button onclick="switchVideo('HB8HnAA_G2k', '70 Super Hits (5+ Hours)')" 
+        class="bg-slate-900 hover:bg-slate-800 border border-emerald-500/40 p-3 rounded-xl flex items-center justify-between text-left transition">
+        <div>
+          <p class="text-sm font-bold text-white">Arijit 70 Super Hits (Zee Music)</p>
+          <p class="text-xs text-slate-400">5+ Hours Non-Stop Magic</p>
+        </div>
+        <i class="fa-solid fa-play text-emerald-400 text-sm"></i>
       </button>
 
-      <!-- Main Play/Pause Button -->
-      <button id="play-btn" onclick="togglePlay()" class="w-16 h-16 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-lg shadow-emerald-500/30 transition transform active:scale-95">
-        <i id="play-icon" class="fa-solid fa-play text-2xl ml-1"></i>
+      <button onclick="switchVideo('284Ov7ysmfA', 'Best of Arijit Romantic')" 
+        class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-left transition">
+        <div>
+          <p class="text-sm font-bold text-white">Arijit Ultimate Romantic Hits</p>
+          <p class="text-xs text-slate-400">Channa Mereya, Tum Hi Ho & More</p>
+        </div>
+        <i class="fa-solid fa-play text-slate-400 text-sm"></i>
       </button>
 
-      <!-- 10 Sec Forward -->
-      <button onclick="seekForward()" title="+10s" class="p-3 text-slate-400 hover:text-white transition active:scale-90">
-        <i class="fa-solid fa-rotate-right text-2xl"></i>
+      <button onclick="switchVideo('BddP6PYo2gs', 'Arijit Latest 2024-2026 Hits')" 
+        class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-left transition">
+        <div>
+          <p class="text-sm font-bold text-white">Kesariya, Chaleya, Satranga</p>
+          <p class="text-xs text-slate-400">Recent Superhits</p>
+        </div>
+        <i class="fa-solid fa-play text-slate-400 text-sm"></i>
       </button>
-    </div>
-
-    <!-- Quick Songs Chapters / Fast Skip -->
-    <div class="flex flex-col gap-2">
-      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-1">Popular Jumps</span>
-      <div class="grid grid-cols-2 gap-2 text-xs">
-        <button onclick="jumpTo(21)" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left p-2.5 rounded-xl truncate transition">
-          <span class="text-emerald-400 font-bold block text-[10px]">00:21</span>
-          <span class="text-white truncate">Apna Bana Le</span>
-        </button>
-        <button onclick="jumpTo(977)" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left p-2.5 rounded-xl truncate transition">
-          <span class="text-emerald-400 font-bold block text-[10px]">16:17</span>
-          <span class="text-white truncate">Phir Bhi Tumko</span>
-        </button>
-        <button onclick="jumpTo(1639)" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left p-2.5 rounded-xl truncate transition">
-          <span class="text-emerald-400 font-bold block text-[10px]">27:19</span>
-          <span class="text-white truncate">Zaalima</span>
-        </button>
-        <button onclick="jumpTo(1925)" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left p-2.5 rounded-xl truncate transition">
-          <span class="text-emerald-400 font-bold block text-[10px]">32:05</span>
-          <span class="text-white truncate">Pal Pal Dil Ke Paas</span>
-        </button>
-      </div>
     </div>
 
   </div>
 
-  <!-- YouTube IFrame API Script -->
-  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    const VIDEO_ID = 'HB8HnAA_G2k'; // Arijit Singh 70 Super Hits Video
-    let player;
-    let isPlaying = false;
-
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('youtube-player', {
-        width: '100%',
-        height: '100%',
-        videoId: VIDEO_ID,
-        playerVars: {
-          autoplay: 0,
-          playsinline: 1,
-          controls: 1, // Video timeline aur default controls enable
-          modestbranding: 1,
-          rel: 0
-        },
-        events: {
-          'onStateChange': onPlayerStateChange
-        }
-      });
+    function switchVideo(id, title) {
+      const iframe = document.getElementById('player-frame');
+      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0`;
     }
-
-    function onPlayerStateChange(event) {
-      if (event.data === YT.PlayerState.PLAYING) {
-        isPlaying = true;
-        updatePlayBtn();
-      } else if (event.data === YT.PlayerState.PAUSED) {
-        isPlaying = false;
-        updatePlayBtn();
-      }
-    }
-
-    function togglePlay() {
-      if (!player) return;
-      if (isPlaying) {
-        
+  </script>
+</body>
+</html>
