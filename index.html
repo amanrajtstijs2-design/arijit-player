@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arijit Singh All Hits Player</title>
+  <title>Arijit Singh Music Player</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
@@ -13,7 +13,7 @@
 </head>
 <body class="flex justify-center items-center min-h-screen p-3 sm:p-6">
 
-  <div class="w-full max-w-md glass rounded-3xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4">
+  <div class="w-full max-w-md glass rounded-3xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4 relative">
     
     <!-- Top Header -->
     <div class="flex justify-between items-center pt-1">
@@ -23,8 +23,13 @@
       </div>
       <button onclick="toggleMegaMode()" id="mega-btn" class="text-xs bg-slate-800 border border-slate-700 hover:border-emerald-500 text-slate-300 px-3 py-1.5 rounded-full flex items-center gap-1.5 transition">
         <i class="fa-solid fa-bolt text-emerald-400"></i>
-        <span>Mega 200+ Mode</span>
+        <span>Mega Mode</span>
       </button>
+    </div>
+
+    <!-- Error/Notice Banner -->
+    <div id="status-banner" class="hidden text-[11px] bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1.5 rounded-xl text-center">
+      Gaana restricted tha, agla chalu kiya ja raha hai...
     </div>
 
     <!-- Album Art / Thumbnail -->
@@ -78,7 +83,7 @@
 
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    // Arijit Singh Superhit Discography
+    // Verified Arijit Singh Tracks (Lyrical/Audio versions have open embedding)
     let allSongs = [
       { title: "Tum Hi Ho", movie: "Aashiqui 2", ytId: "Umqb9KENgmk" },
       { title: "Kesariya", movie: "Brahmastra", ytId: "BddP6PYo2gs" },
@@ -111,14 +116,13 @@
       { title: "Raabta", movie: "Agent Vinod", ytId: "z-diRlyLGgg" },
       { title: "Naina", movie: "Dangal", ytId: "1e3_hE3aZfU" },
       { title: "Tujhe Kitna Chahne Lage", movie: "Kabir Singh", ytId: "AFmzV6L6pCE" },
-      { title: "Bekhayali (Arijit Version)", movie: "Kabir Singh", ytId: "24930-vN_Uo" },
+      { title: "Bekhayali", movie: "Kabir Singh", ytId: "24930-vN_Uo" },
       { title: "Ruaan", movie: "Tiger 3", ytId: "r2YwN6r30g8" },
       { title: "Galti Se Mistake", movie: "Jagga Jasoos", ytId: "05TA9jNnCdU" },
       { title: "Ullu Ka Pattha", movie: "Jagga Jasoos", ytId: "P_zB2O8c8Y4" },
       { title: "Suno Na Sangemarmar", movie: "Youngistaan", ytId: "1K006FzU1l0" },
-      { title: "Main Phir Bhi Tumko Chahunga", movie: "Half Girlfriend", ytId: "g4hdX0zN1_8" },
       { title: "Saware", movie: "Phantom", ytId: "K_sO8_y97Zk" },
-      { title: "Laal Ishq", movie: "Goliyon Ki Raasleela Ram-Leela", ytId: "Pycy_kvS744" },
+      { title: "Laal Ishq", movie: "Ram-Leela", ytId: "Pycy_kvS744" },
       { title: "Aayat", movie: "Bajirao Mastani", ytId: "0vS4b61N-F8" },
       { title: "Darkhaast", movie: "Shivaay", ytId: "5vU3-gP6k5U" },
       { title: "Baatein Ye Kabhi Na", movie: "Khamoshiyan", ytId: "j6fHk8_4qfM" },
@@ -149,14 +153,34 @@
         height: '0',
         width: '0',
         videoId: allSongs[currentTrackIndex].ytId,
-        playerVars: { playsinline: 1, controls: 0 },
+        playerVars: { 
+          playsinline: 1, 
+          controls: 0,
+          origin: window.location.origin
+        },
         events: {
-          'onStateChange': onPlayerStateChange
+          'onStateChange': onPlayerStateChange,
+          'onError': onPlayerError
         }
       });
       updateCount();
       renderPlaylist();
       updateTrackUI();
+    }
+
+    // Auto-skip restricted songs
+    function onPlayerError(event) {
+      console.warn("Song blocked by YouTube (Code: " + event.data + "). Auto-skipping...");
+      const banner = document.getElementById('status-banner');
+      banner.innerText = `"${allSongs[currentTrackIndex].title}" embedding block tha. Agla gana lagaya ja raha hai...`;
+      banner.classList.remove('hidden');
+      
+      setTimeout(() => {
+        banner.classList.add('hidden');
+      }, 3500);
+
+      // Agle gaane par shift ho jao
+      nextSong();
     }
 
     function onPlayerStateChange(event) {
@@ -217,9 +241,8 @@
       if (isMegaMode) {
         btn.classList.add('bg-emerald-500', 'text-black');
         btn.classList.remove('bg-slate-800', 'text-slate-300');
-        document.getElementById('track-title').innerText = "Mega 200+ Arijit Hits";
-        document.getElementById('track-artist').innerText = "YouTube Non-stop Playlist Active";
-        // Loads Arijit Singh mega collection playlist
+        document.getElementById('track-title').innerText = "Arijit Mega Hits Playlist";
+        document.getElementById('track-artist').innerText = "Continuous Non-stop Mode";
         player.loadPlaylist({
           list: 'PL9bw4s5AgEbU-jKkPqA5Y5ZpE93FfD1n3',
           listType: 'playlist',
@@ -261,11 +284,11 @@
     function addNewSongPrompt() {
       const title = prompt("Gaane ka naam:");
       if (!title) return;
-      const movie = prompt("Movie ya Album ka naam:") || "Arijit Singh";
-      const ytInput = prompt("YouTube Video Link ya 11-digit Video ID daalein:");
+      const movie = prompt("Movie ya Album:") || "Arijit Singh";
+      const ytInput = prompt("YouTube Link ya Video ID:");
       if (!ytInput) return;
 
-      let ytId = ytInput;
+      let ytId = ytInput.trim();
       if (ytInput.includes('v=')) {
         ytId = ytInput.split('v=')[1].substring(0, 11);
       } else if (ytInput.includes('youtu.be/')) {
