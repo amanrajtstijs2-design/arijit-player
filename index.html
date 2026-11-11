@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arijit Singh Music Player</title>
+  <title>Arijit Singh Cloud Player</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    body { background-color: #0b0f19; color: #f8fafc; font-family: system-ui, sans-serif; }
-    .glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); }
+    body { background-color: #080d1a; color: #f8fafc; font-family: system-ui, sans-serif; }
+    .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); }
+    input[type="range"]::-webkit-slider-thumb {
+      width: 12px; height: 12px; border-radius: 50%; background: #10b981; appearance: none;
+    }
   </style>
 </head>
 <body class="flex justify-center items-center min-h-screen p-3 sm:p-6">
@@ -18,32 +21,33 @@
     <!-- Top Header -->
     <div class="flex justify-between items-center pt-1">
       <div>
-        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Only Arijit Singh</span>
-        <h1 class="text-xl font-black text-white">Arijit Tunes Pro</h1>
+        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">JioSaavn Powered</span>
+        <h1 class="text-xl font-black text-white">Arijit Cloud Stream</h1>
       </div>
-      <button onclick="toggleMegaMode()" id="mega-btn" class="text-xs bg-slate-800 border border-slate-700 hover:border-emerald-500 text-slate-300 px-3 py-1.5 rounded-full flex items-center gap-1.5 transition">
-        <i class="fa-solid fa-bolt text-emerald-400"></i>
-        <span>Mega Mode</span>
-      </button>
-    </div>
-
-    <!-- Error/Notice Banner -->
-    <div id="status-banner" class="hidden text-[11px] bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1.5 rounded-xl text-center">
-      Gaana restricted tha, agla chalu kiya ja raha hai...
+      <div id="loading-badge" class="hidden text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+        <i class="fa-solid fa-spinner fa-spin text-xs"></i> Loading...
+      </div>
     </div>
 
     <!-- Album Art / Thumbnail -->
-    <div class="relative w-full aspect-square rounded-2xl overflow-hidden shadow-xl border border-slate-700/60">
-      <img id="track-art" src="https://img.youtube.com/vi/Umqb9KENgmk/hqdefault.jpg" alt="Song Cover" class="w-full h-full object-cover transition-all duration-300" />
+    <div class="relative w-full aspect-square rounded-2xl overflow-hidden shadow-2xl border border-slate-800">
+      <img id="track-art" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500" alt="Song Cover" class="w-full h-full object-cover transition-all duration-300" />
       <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
       <div class="absolute bottom-4 left-4 right-4">
-        <h2 id="track-title" class="text-lg font-bold truncate text-white">Tum Hi Ho</h2>
-        <p id="track-artist" class="text-xs text-slate-300 truncate">Aashiqui 2 • Arijit Singh</p>
+        <h2 id="track-title" class="text-lg font-bold truncate text-white">Select a song</h2>
+        <p id="track-artist" class="text-xs text-slate-300 truncate">Arijit Singh</p>
       </div>
     </div>
 
-    <!-- Hidden YouTube Audio Engine -->
-    <div id="youtube-player" class="hidden"></div>
+    <!-- Seekbar / Audio Progress -->
+    <div class="flex flex-col gap-1 mt-1">
+      <input type="range" id="seek-bar" value="0" min="0" step="1" oninput="seekAudio()" 
+        class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+      <div class="flex justify-between text-[11px] text-slate-400 px-0.5">
+        <span id="current-time">0:00</span>
+        <span id="total-duration">0:00</span>
+      </div>
+    </div>
 
     <!-- Controls -->
     <div class="flex items-center justify-center gap-7 my-1">
@@ -60,267 +64,207 @@
       </button>
     </div>
 
-    <!-- Search & Add Bar -->
-    <div class="flex gap-2">
-      <div class="relative flex-1">
-        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-        <input type="text" id="search-box" oninput="filterSongs()" placeholder="Gaana dhoondhein..." 
-          class="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 pl-8 pr-3 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
-      </div>
-      <button onclick="addNewSongPrompt()" title="Apna gaana add karein" class="bg-slate-800 hover:bg-emerald-600 border border-slate-700 px-3 rounded-xl text-white text-xs flex items-center gap-1 transition">
-        <i class="fa-solid fa-plus text-emerald-400 hover:text-white"></i> Add
-      </button>
+    <!-- Live Search Bar -->
+    <div class="relative">
+      <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+      <input type="text" id="search-box" onkeypress="handleSearch(event)" placeholder="Search any Arijit song (e.g. Gerua, Zaalima)..." 
+        class="w-full bg-slate-900 border border-slate-700/80 rounded-xl py-2 pl-9 pr-14 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500" />
+      <button onclick="triggerSearch()" class="absolute right-2 top-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg">Go</button>
     </div>
 
     <!-- Playlist Section -->
     <div class="flex flex-col gap-2">
       <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase px-1">
-        <span>Arijit Songs (<span id="total-songs">0</span>)</span>
+        <span>Arijit Tracks (<span id="total-songs">0</span>)</span>
       </div>
       <div id="playlist" class="flex flex-col gap-2 max-h-56 overflow-y-auto pr-1"></div>
     </div>
   </div>
 
-  <script src="https://www.youtube.com/iframe_api"></script>
+  <audio id="audio-engine" preload="metadata"></audio>
+
   <script>
-    // Verified Arijit Singh Tracks (Lyrical/Audio versions have open embedding)
-    let allSongs = [
-      { title: "Tum Hi Ho", movie: "Aashiqui 2", ytId: "Umqb9KENgmk" },
-      { title: "Kesariya", movie: "Brahmastra", ytId: "BddP6PYo2gs" },
-      { title: "Satranga", movie: "Animal", ytId: "HR5e0O8b5wE" },
-      { title: "Channa Mereya", movie: "Ae Dil Hai Mushkil", ytId: "284Ov7ysmfA" },
-      { title: "Chaleya", movie: "Jawan", ytId: "VAdGW7QDJUI" },
-      { title: "Agar Tum Saath Ho", movie: "Tamasha", ytId: "sK7riqg2mr4" },
-      { title: "O Bedardeya", movie: "Tu Jhoothi Main Makkaar", ytId: "YxWlaYCA8MU" },
-      { title: "Shayad", movie: "Love Aaj Kal", ytId: "vquL7w5Ua-Y" },
-      { title: "Apna Bana Le", movie: "Bhediya", ytId: "ElZfdU54Cp8" },
-      { title: "Heeriye", movie: "Jasleen Royal ft. Arijit", ytId: "RLzC55aiAoY" },
-      { title: "Sajni", movie: "Laapataa Ladies", ytId: "k3g_WjLCs6I" },
-      { title: "O Maahi", movie: "Dunki", ytId: "f_b_jP5_v8Q" },
-      { title: "Lutt Putt Gaya", movie: "Dunki", ytId: "edgyp_0_nUQ" },
-      { title: "Ae Dil Hai Mushkil", movie: "Ae Dil Hai Mushkil", ytId: "6FURuLYrR_Q" },
-      { title: "Hawayein", movie: "Jab Harry Met Sejal", ytId: "cdybfl7gW9Y" },
-      { title: "Gerua", movie: "Dilwale", ytId: "AEIVhBS6baE" },
-      { title: "Zaalima", movie: "Raees", ytId: "lpdRqn6xwiM" },
-      { title: "Hamari Adhuri Kahani", movie: "Hamari Adhuri Kahani", ytId: "fgTG_H6f9g4" },
-      { title: "Muskurane", movie: "Citylights", ytId: "0-7I_yE74y8" },
-      { title: "Kalank Title Track", movie: "Kalank", ytId: "Grr0Exhy-lQ" },
-      { title: "Tera Yaar Hoon Main", movie: "Sonu Ke Titu Ki Sweety", ytId: "E4i3bAtEuJE" },
-      { title: "Soch Na Sake", movie: "Airlift", ytId: "OJvy_kWmE0U" },
-      { title: "Phir Bhi Tumko Chaahunga", movie: "Half Girlfriend", ytId: "_iktURkE530" },
-      { title: "Enna Sona", movie: "OK Jaanu", ytId: "spffc8m57lY" },
-      { title: "Khairiyat", movie: "Chhichhore", ytId: "hoNb6HuNmU0" },
-      { title: "Mast Magan", movie: "2 States", ytId: "xdp034bT8ls" },
-      { title: "Ilahi", movie: "Yeh Jawaani Hai Deewani", ytId: "fdubeMFwuGs" },
-      { title: "Ve Kamleya", movie: "Rocky Aur Rani Kii Prem Kahaani", ytId: "bCuhuejm8Zw" },
-      { title: "Raabta", movie: "Agent Vinod", ytId: "z-diRlyLGgg" },
-      { title: "Naina", movie: "Dangal", ytId: "1e3_hE3aZfU" },
-      { title: "Tujhe Kitna Chahne Lage", movie: "Kabir Singh", ytId: "AFmzV6L6pCE" },
-      { title: "Bekhayali", movie: "Kabir Singh", ytId: "24930-vN_Uo" },
-      { title: "Ruaan", movie: "Tiger 3", ytId: "r2YwN6r30g8" },
-      { title: "Galti Se Mistake", movie: "Jagga Jasoos", ytId: "05TA9jNnCdU" },
-      { title: "Ullu Ka Pattha", movie: "Jagga Jasoos", ytId: "P_zB2O8c8Y4" },
-      { title: "Suno Na Sangemarmar", movie: "Youngistaan", ytId: "1K006FzU1l0" },
-      { title: "Saware", movie: "Phantom", ytId: "K_sO8_y97Zk" },
-      { title: "Laal Ishq", movie: "Ram-Leela", ytId: "Pycy_kvS744" },
-      { title: "Aayat", movie: "Bajirao Mastani", ytId: "0vS4b61N-F8" },
-      { title: "Darkhaast", movie: "Shivaay", ytId: "5vU3-gP6k5U" },
-      { title: "Baatein Ye Kabhi Na", movie: "Khamoshiyan", ytId: "j6fHk8_4qfM" },
-      { title: "Khamoshiyan", movie: "Khamoshiyan", ytId: "Mv3SZDP7QUo" },
-      { title: "Samjhawan", movie: "Humpty Sharma Ki Dulhania", ytId: "H2f7MZUevrA" },
-      { title: "Pal", movie: "Jalebi", ytId: "a_pB0H_lU1A" },
-      { title: "Duaa", movie: "Shanghai", ytId: "hQ_Yy7G3jR0" },
-      { title: "Phir Le Aya Dil", movie: "Barfi!", ytId: "aU_17-K-J_U" },
-      { title: "Bolna", movie: "Kapoor & Sons", ytId: "4_8Z8-q_wL0" },
-      { title: "Nashe Si Chadh Gayi", movie: "Befikre", ytId: "Wd2B8OAOtU8" },
-      { title: "Zindagi Kuch Toh Bata", movie: "Bajrangi Bhaijaan", ytId: "m1l7-c5q82Y" },
-      { title: "Tera Hoke Rahoon", movie: "Behen Hogi Teri", ytId: "6z5F_q4b5kI" },
-      { title: "Dil Sambhal Ja Zara", movie: "Murder 2", ytId: "6Fk-H7mF_y8" }
-    ];
+    const audio = document.getElementById('audio-engine');
+    const seekBar = document.getElementById('seek-bar');
+    const currentTimeText = document.getElementById('current-time');
+    const totalDurationText = document.getElementById('total-duration');
+    const playIcon = document.getElementById('play-icon');
+    const loadingBadge = document.getElementById('loading-badge');
 
+    let songs = [];
     let currentTrackIndex = 0;
-    let player;
     let isPlaying = false;
-    let isMegaMode = false;
-    let filteredList = [...allSongs];
 
-    function updateCount() {
-      document.getElementById('total-songs').innerText = allSongs.length;
-    }
+    // Load initial 50 Arijit Singh hits on start
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchArijitSongs("Arijit Singh");
+    });
 
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('youtube-player', {
-        height: '0',
-        width: '0',
-        videoId: allSongs[currentTrackIndex].ytId,
-        playerVars: { 
-          playsinline: 1, 
-          controls: 0,
-          origin: window.location.origin
-        },
-        events: {
-          'onStateChange': onPlayerStateChange,
-          'onError': onPlayerError
+    async function fetchArijitSongs(query) {
+      showLoading(true);
+      try {
+        const res = await fetch(`https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&page=1&limit=50`);
+        const data = await res.json();
+        
+        if (data.success && data.data.results.length > 0) {
+          songs = data.data.results.map(item => {
+            // Find highest quality audio stream
+            const audioObj = item.downloadUrl ? (item.downloadUrl[4] || item.downloadUrl[3] || item.downloadUrl[0]) : null;
+            // Find highest quality album art
+            const imgObj = item.image ? (item.image[2] || item.image[1] || item.image[0]) : null;
+
+            return {
+              title: decodeHTMLEntities(item.name || "Unknown"),
+              movie: decodeHTMLEntities((item.album && item.album.name) ? item.album.name : "Single"),
+              cover: imgObj ? imgObj.url : "https://img.youtube.com/vi/Umqb9KENgmk/hqdefault.jpg",
+              url: audioObj ? audioObj.url : ""
+            };
+          }).filter(s => s.url !== ""); // Filter out broken tracks
+
+          document.getElementById('total-songs').innerText = songs.length;
+          renderPlaylist();
+          if (songs.length > 0) {
+            selectTrack(0, false);
+          }
         }
-      });
-      updateCount();
-      renderPlaylist();
-      updateTrackUI();
-    }
-
-    // Auto-skip restricted songs
-    function onPlayerError(event) {
-      console.warn("Song blocked by YouTube (Code: " + event.data + "). Auto-skipping...");
-      const banner = document.getElementById('status-banner');
-      banner.innerText = `"${allSongs[currentTrackIndex].title}" embedding block tha. Agla gana lagaya ja raha hai...`;
-      banner.classList.remove('hidden');
-      
-      setTimeout(() => {
-        banner.classList.add('hidden');
-      }, 3500);
-
-      // Agle gaane par shift ho jao
-      nextSong();
-    }
-
-    function onPlayerStateChange(event) {
-      if (event.data === YT.PlayerState.PLAYING) {
-        isPlaying = true;
-        updatePlayBtn();
-      } else if (event.data === YT.PlayerState.PAUSED) {
-        isPlaying = false;
-        updatePlayBtn();
-      } else if (event.data === YT.PlayerState.ENDED) {
-        nextSong();
+      } catch (err) {
+        console.error("API Fetch Error:", err);
+      } finally {
+        showLoading(false);
       }
-    }
-
-    function loadTrack(index) {
-      isMegaMode = false;
-      document.getElementById('mega-btn').classList.remove('bg-emerald-500', 'text-black');
-      currentTrackIndex = index;
-      updateTrackUI();
-      if (player && player.loadVideoById) {
-        player.loadVideoById(allSongs[currentTrackIndex].ytId);
-        isPlaying = true;
-        updatePlayBtn();
-      }
-      renderPlaylist();
-    }
-
-    function togglePlay() {
-      if (!player) return;
-      if (isPlaying) {
-        player.pauseVideo();
-      } else {
-        player.playVideo();
-      }
-    }
-
-    function nextSong() {
-      if (isMegaMode && player && player.nextVideo) {
-        player.nextVideo();
-        return;
-      }
-      currentTrackIndex = (currentTrackIndex + 1) % allSongs.length;
-      loadTrack(currentTrackIndex);
-    }
-
-    function prevSong() {
-      if (isMegaMode && player && player.previousVideo) {
-        player.previousVideo();
-        return;
-      }
-      currentTrackIndex = (currentTrackIndex - 1 + allSongs.length) % allSongs.length;
-      loadTrack(currentTrackIndex);
-    }
-
-    function toggleMegaMode() {
-      isMegaMode = !isMegaMode;
-      const btn = document.getElementById('mega-btn');
-      if (isMegaMode) {
-        btn.classList.add('bg-emerald-500', 'text-black');
-        btn.classList.remove('bg-slate-800', 'text-slate-300');
-        document.getElementById('track-title').innerText = "Arijit Mega Hits Playlist";
-        document.getElementById('track-artist').innerText = "Continuous Non-stop Mode";
-        player.loadPlaylist({
-          list: 'PL9bw4s5AgEbU-jKkPqA5Y5ZpE93FfD1n3',
-          listType: 'playlist',
-          index: 0
-        });
-        isPlaying = true;
-        updatePlayBtn();
-      } else {
-        btn.classList.remove('bg-emerald-500', 'text-black');
-        btn.classList.add('bg-slate-800', 'text-slate-300');
-        loadTrack(0);
-      }
-    }
-
-    function updateTrackUI() {
-      const song = allSongs[currentTrackIndex];
-      document.getElementById('track-title').innerText = song.title;
-      document.getElementById('track-artist').innerText = `${song.movie} • Arijit Singh`;
-      document.getElementById('track-art').src = `https://img.youtube.com/vi/${song.ytId}/hqdefault.jpg`;
-    }
-
-    function updatePlayBtn() {
-      const icon = document.getElementById('play-icon');
-      if (isPlaying) {
-        icon.className = "fa-solid fa-pause text-2xl";
-      } else {
-        icon.className = "fa-solid fa-play text-2xl ml-1";
-      }
-    }
-
-    function filterSongs() {
-      const query = document.getElementById('search-box').value.toLowerCase();
-      filteredList = allSongs.filter(s => 
-        s.title.toLowerCase().includes(query) || s.movie.toLowerCase().includes(query)
-      );
-      renderPlaylist();
-    }
-
-    function addNewSongPrompt() {
-      const title = prompt("Gaane ka naam:");
-      if (!title) return;
-      const movie = prompt("Movie ya Album:") || "Arijit Singh";
-      const ytInput = prompt("YouTube Link ya Video ID:");
-      if (!ytInput) return;
-
-      let ytId = ytInput.trim();
-      if (ytInput.includes('v=')) {
-        ytId = ytInput.split('v=')[1].substring(0, 11);
-      } else if (ytInput.includes('youtu.be/')) {
-        ytId = ytInput.split('youtu.be/')[1].substring(0, 11);
-      }
-
-      allSongs.unshift({ title, movie, ytId });
-      filteredList = [...allSongs];
-      updateCount();
-      loadTrack(0);
     }
 
     function renderPlaylist() {
-      const listContainer = document.getElementById('playlist');
-      listContainer.innerHTML = '';
+      const container = document.getElementById('playlist');
+      container.innerHTML = '';
       
-      filteredList.forEach((song) => {
-        const originalIndex = allSongs.findIndex(s => s.ytId === song.ytId);
-        const isActive = !isMegaMode && originalIndex === currentTrackIndex;
+      songs.forEach((song, idx) => {
+        const isActive = idx === currentTrackIndex;
         const item = document.createElement('div');
-        item.className = `flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${isActive ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' : 'hover:bg-slate-800/60 text-slate-300'}`;
-        item.onclick = () => loadTrack(originalIndex);
+        item.className = `flex items-center gap-3 p-2 rounded-xl cursor-pointer transition ${isActive ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' : 'hover:bg-slate-800/60 text-slate-300'}`;
+        item.onclick = () => selectTrack(idx, true);
         item.innerHTML = `
-          <img src="https://img.youtube.com/vi/${song.ytId}/hqdefault.jpg" class="w-10 h-10 rounded-lg object-cover shadow" />
+          <img src="${song.cover}" class="w-10 h-10 rounded-lg object-cover shadow" />
           <div class="flex-1 min-w-0">
             <p class="text-sm font-semibold truncate ${isActive ? 'text-emerald-300' : 'text-white'}">${song.title}</p>
             <p class="text-xs text-slate-400 truncate">${song.movie}</p>
           </div>
           ${isActive ? '<i class="fa-solid fa-volume-high text-xs text-emerald-400"></i>' : ''}
         `;
-        listContainer.appendChild(item);
+        container.appendChild(item);
       });
+    }
+
+    function selectTrack(index, autoplay = true) {
+      if (!songs[index]) return;
+      currentTrackIndex = index;
+      const song = songs[currentTrackIndex];
+
+      document.getElementById('track-title').innerText = song.title;
+      document.getElementById('track-artist').innerText = `${song.movie} • Arijit Singh`;
+      document.getElementById('track-art').src = song.cover;
+
+      audio.src = song.url;
+      audio.load();
+
+      // Lock Screen Controls (MediaSession API)
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: song.title,
+          artist: "Arijit Singh",
+          album: song.movie,
+          artwork: [{ src: song.cover, sizes: '512x512', type: 'image/jpeg' }]
+        });
+        navigator.mediaSession.setActionHandler('play', togglePlay);
+        navigator.mediaSession.setActionHandler('pause', togglePlay);
+        navigator.mediaSession.setActionHandler('previoustrack', prevSong);
+        navigator.mediaSession.setActionHandler('nexttrack', nextSong);
+      }
+
+      renderPlaylist();
+
+      if (autoplay) {
+        audio.play().then(() => {
+          isPlaying = true;
+          updatePlayBtn();
+        }).catch(err => console.log(err));
+      }
+    }
+
+    function togglePlay() {
+      if (!audio.src) return;
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+      } else {
+        audio.play();
+        isPlaying = true;
+      }
+      updatePlayBtn();
+    }
+
+    function nextSong() {
+      currentTrackIndex = (currentTrackIndex + 1) % songs.length;
+      selectTrack(currentTrackIndex, true);
+    }
+
+    function prevSong() {
+      currentTrackIndex = (currentTrackIndex - 1 + songs.length) % songs.length;
+      selectTrack(currentTrackIndex, true);
+    }
+
+    function updatePlayBtn() {
+      if (isPlaying) {
+        playIcon.className = "fa-solid fa-pause text-2xl";
+      } else {
+        playIcon.className = "fa-solid fa-play text-2xl ml-1";
+      }
+    }
+
+    // Audio Timeline & Seekbar
+    audio.addEventListener('timeupdate', () => {
+      if (!isNaN(audio.duration)) {
+        seekBar.max = Math.floor(audio.duration);
+        seekBar.value = Math.floor(audio.currentTime);
+        currentTimeText.innerText = formatTime(audio.currentTime);
+        totalDurationText.innerText = formatTime(audio.duration);
+      }
+    });
+
+    audio.addEventListener('ended', nextSong);
+
+    function seekAudio() {
+      audio.currentTime = seekBar.value;
+    }
+
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function handleSearch(e) {
+      if (e.key === 'Enter') triggerSearch();
+    }
+
+    function triggerSearch() {
+      const q = document.getElementById('search-box').value.trim();
+      if (q) {
+        fetchArijitSongs("Arijit Singh " + q);
+      } else {
+        fetchArijitSongs("Arijit Singh");
+      }
+    }
+
+    function showLoading(show) {
+      if (show) loadingBadge.classList.remove('hidden');
+      else loadingBadge.classList.add('hidden');
+    }
+
+    function decodeHTMLEntities(str) {
+      const txt = document.createElement('textarea');
+      txt.innerHTML = str;
+      return txt.value;
     }
   </script>
 </body>
