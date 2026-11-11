@@ -3,87 +3,235 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arijit Singh Mega Player</title>
+  <title>Arijit Singh Pure MP3 Player</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    body { background-color: #070b14; color: #f8fafc; font-family: system-ui, sans-serif; }
-    .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); }
+    body { background-color: #060913; color: #f8fafc; font-family: system-ui, sans-serif; }
+    .glass { background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(20px); }
+    input[type="range"]::-webkit-slider-thumb {
+      width: 14px; height: 14px; border-radius: 50%; background: #10b981; appearance: none;
+    }
   </style>
 </head>
 <body class="flex justify-center items-center min-h-screen p-3 sm:p-6">
 
-  <div class="w-full max-w-md glass rounded-3xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4">
+  <div class="w-full max-w-md glass rounded-3xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4 relative">
     
     <!-- Top Header -->
     <div class="flex justify-between items-center pt-1">
       <div>
-        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">5+ Hours Non-Stop</span>
-        <h1 class="text-xl font-black text-white">Arijit Special Player</h1>
+        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">Pure Audio • Background Mode</span>
+        <h1 class="text-xl font-black text-white">Arijit MP3 Pro</h1>
       </div>
-      <a href="https://youtu.be/HB8HnAA_G2k" target="_blank" class="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-full flex items-center gap-1">
-        <i class="fa-brands fa-youtube"></i> Open App
-      </a>
+      <label for="file-upload" class="cursor-pointer text-xs bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-full font-semibold flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-folder-open text-xs"></i> Phone se Gaane Chunein
+      </label>
+      <input id="file-upload" type="file" accept="audio/*" multiple class="hidden" onchange="loadLocalFiles(event)" />
     </div>
 
-    <!-- Direct Embedded Video Frame -->
-    <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-black">
-      <iframe 
-        id="player-frame"
-        class="w-full h-full"
-        src="https://www.youtube.com/embed/HB8HnAA_G2k?playsinline=1&rel=0&modestbranding=1" 
-        title="Arijit Singh Non-Stop"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-      </iframe>
+    <!-- Album Art / Thumbnail -->
+    <div class="relative w-full aspect-square rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-900">
+      <img id="track-art" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600" alt="Song Cover" class="w-full h-full object-cover transition-all duration-300" />
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+      <div class="absolute bottom-4 left-4 right-4">
+        <h2 id="track-title" class="text-lg font-bold truncate text-white">Arijit Singh Hits</h2>
+        <p id="track-artist" class="text-xs text-slate-300 truncate">Background Playback Ready</p>
+      </div>
     </div>
 
-    <!-- Notice -->
-    <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs text-slate-300 flex items-start gap-2.5">
-      <i class="fa-solid fa-circle-info text-emerald-400 mt-0.5"></i>
-      <p>Gaana chalu karne ke liye <b>video screen ke center par tap karein</b>. Mobile security ki wajah se pehla tap screen par zaroori hota hai.</p>
+    <!-- Audio Progress / Seekbar -->
+    <div class="flex flex-col gap-1 mt-1">
+      <input type="range" id="seek-bar" value="0" min="0" step="1" oninput="seekAudio()" 
+        class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+      <div class="flex justify-between text-[11px] text-slate-400 px-0.5">
+        <span id="current-time">0:00</span>
+        <span id="total-duration">0:00</span>
+      </div>
     </div>
 
-    <!-- Alternative Non-Stop Collections -->
-    <div class="flex flex-col gap-2 mt-1">
-      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-1">Other Working Non-Stop Hits</span>
-      
-      <button onclick="switchVideo('HB8HnAA_G2k', '70 Super Hits (5+ Hours)')" 
-        class="bg-slate-900 hover:bg-slate-800 border border-emerald-500/40 p-3 rounded-xl flex items-center justify-between text-left transition">
-        <div>
-          <p class="text-sm font-bold text-white">Arijit 70 Super Hits (Zee Music)</p>
-          <p class="text-xs text-slate-400">5+ Hours Non-Stop Magic</p>
-        </div>
-        <i class="fa-solid fa-play text-emerald-400 text-sm"></i>
+    <!-- Player Controls -->
+    <div class="flex items-center justify-center gap-8 my-1">
+      <button onclick="prevSong()" class="p-3 text-slate-400 hover:text-white transition active:scale-90">
+        <i class="fa-solid fa-backward-step text-2xl"></i>
       </button>
 
-      <button onclick="switchVideo('284Ov7ysmfA', 'Best of Arijit Romantic')" 
-        class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-left transition">
-        <div>
-          <p class="text-sm font-bold text-white">Arijit Ultimate Romantic Hits</p>
-          <p class="text-xs text-slate-400">Channa Mereya, Tum Hi Ho & More</p>
-        </div>
-        <i class="fa-solid fa-play text-slate-400 text-sm"></i>
+      <button id="play-btn" onclick="togglePlay()" class="w-16 h-16 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-lg shadow-emerald-500/30 transition transform active:scale-95">
+        <i id="play-icon" class="fa-solid fa-play text-2xl ml-1"></i>
       </button>
 
-      <button onclick="switchVideo('BddP6PYo2gs', 'Arijit Latest 2024-2026 Hits')" 
-        class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-left transition">
-        <div>
-          <p class="text-sm font-bold text-white">Kesariya, Chaleya, Satranga</p>
-          <p class="text-xs text-slate-400">Recent Superhits</p>
-        </div>
-        <i class="fa-solid fa-play text-slate-400 text-sm"></i>
+      <button onclick="nextSong()" class="p-3 text-slate-400 hover:text-white transition active:scale-90">
+        <i class="fa-solid fa-forward-step text-2xl"></i>
       </button>
+    </div>
+
+    <!-- Playlist Section -->
+    <div class="flex flex-col gap-2">
+      <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase px-1">
+        <span>Loaded Tracks (<span id="total-songs">0</span>)</span>
+      </div>
+      <div id="playlist" class="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1"></div>
     </div>
 
   </div>
 
+  <!-- Pure HTML5 Audio Element -->
+  <audio id="audio-engine" preload="auto"></audio>
+
   <script>
-    function switchVideo(id, title) {
-      const iframe = document.getElementById('player-frame');
-      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0`;
+    const audio = document.getElementById('audio-engine');
+    const seekBar = document.getElementById('seek-bar');
+    const currentTimeText = document.getElementById('current-time');
+    const totalDurationText = document.getElementById('total-duration');
+    const playIcon = document.getElementById('play-icon');
+
+    // Online direct MP3 files (GitHub repo me dali files ya open direct streams)
+    let songs = [
+      {
+        title: "Tum Hi Ho (Original MP3)",
+        movie: "Aashiqui 2",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600",
+        url: "tum-hi-ho.mp3" // Agar GitHub me upload karein
+      }
+    ];
+
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+
+    // Load Local Files from Phone Storage (Zero Internet, Full Background Play)
+    function loadLocalFiles(event) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+
+      songs = files.map(file => ({
+        title: file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+        movie: "Phone Storage",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600",
+        url: URL.createObjectURL(file)
+      }));
+
+      document.getElementById('total-songs').innerText = songs.length;
+      renderPlaylist();
+      selectTrack(0, true);
     }
+
+    function renderPlaylist() {
+      const container = document.getElementById('playlist');
+      container.innerHTML = '';
+      document.getElementById('total-songs').innerText = songs.length;
+
+      songs.forEach((song, idx) => {
+        const isActive = idx === currentTrackIndex;
+        const item = document.createElement('div');
+        item.className = `flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${isActive ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' : 'hover:bg-slate-800/60 text-slate-300'}`;
+        item.onclick = () => selectTrack(idx, true);
+        item.innerHTML = `
+          <div class="w-9 h-9 rounded-lg bg-emerald-950/70 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-xs">
+            ${idx + 1}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold truncate ${isActive ? 'text-emerald-300' : 'text-white'}">${song.title}</p>
+            <p class="text-xs text-slate-400 truncate">${song.movie}</p>
+          </div>
+          ${isActive ? '<i class="fa-solid fa-volume-high text-xs text-emerald-400"></i>' : ''}
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function selectTrack(index, autoplay = true) {
+      if (!songs[index]) return;
+      currentTrackIndex = index;
+      const song = songs[currentTrackIndex];
+
+      document.getElementById('track-title').innerText = song.title;
+      document.getElementById('track-artist').innerText = `${song.movie} • Arijit Singh`;
+      document.getElementById('track-art').src = song.cover;
+
+      audio.src = song.url;
+      audio.load();
+
+      // Android Notification & Lock Screen Media Controls (MediaSession API)
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: song.title,
+          artist: "Arijit Singh",
+          album: song.movie,
+          artwork: [{ src: song.cover, sizes: '512x512', type: 'image/jpeg' }]
+        });
+        navigator.mediaSession.setActionHandler('play', togglePlay);
+        navigator.mediaSession.setActionHandler('pause', togglePlay);
+        navigator.mediaSession.setActionHandler('previoustrack', prevSong);
+        navigator.mediaSession.setActionHandler('nexttrack', nextSong);
+      }
+
+      renderPlaylist();
+
+      if (autoplay) {
+        audio.play().then(() => {
+          isPlaying = true;
+          updatePlayBtn();
+        }).catch(err => console.log(err));
+      }
+    }
+
+    function togglePlay() {
+      if (!audio.src) return;
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+      } else {
+        audio.play();
+        isPlaying = true;
+      }
+      updatePlayBtn();
+    }
+
+    function nextSong() {
+      if (songs.length === 0) return;
+      currentTrackIndex = (currentTrackIndex + 1) % songs.length;
+      selectTrack(currentTrackIndex, true);
+    }
+
+    function prevSong() {
+      if (songs.length === 0) return;
+      currentTrackIndex = (currentTrackIndex - 1 + songs.length) % songs.length;
+      selectTrack(currentTrackIndex, true);
+    }
+
+    function updatePlayBtn() {
+      if (isPlaying) {
+        playIcon.className = "fa-solid fa-pause text-2xl";
+      } else {
+        playIcon.className = "fa-solid fa-play text-2xl ml-1";
+      }
+    }
+
+    // Seekbar handling
+    audio.addEventListener('timeupdate', () => {
+      if (!isNaN(audio.duration)) {
+        seekBar.max = Math.floor(audio.duration);
+        seekBar.value = Math.floor(audio.currentTime);
+        currentTimeText.innerText = formatTime(audio.currentTime);
+        totalDurationText.innerText = formatTime(audio.duration);
+      }
+    });
+
+    audio.addEventListener('ended', nextSong);
+
+    function seekAudio() {
+      audio.currentTime = seekBar.value;
+    }
+
+    function formatTime(secs) {
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderPlaylist();
+    });
   </script>
 </body>
 </html>
