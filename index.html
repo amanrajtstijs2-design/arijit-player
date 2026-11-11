@@ -3,157 +3,112 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arijit Singh Hits Player</title>
+  <title>Arijit Singh 70+ Non-Stop Hits</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    body { background-color: #080d1a; color: #f8fafc; font-family: system-ui, sans-serif; }
-    .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); }
+    body { background-color: #070b14; color: #f8fafc; font-family: system-ui, sans-serif; }
+    .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); }
   </style>
 </head>
 <body class="flex justify-center items-center min-h-screen p-3 sm:p-6">
 
-  <div class="w-full max-w-md glass rounded-3xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4">
+  <!-- Mobile App Frame -->
+  <div class="w-full max-w-md glass rounded-3xl p-5 shadow-2xl border border-slate-800 flex flex-col gap-4 relative">
     
     <!-- Top Header -->
     <div class="flex justify-between items-center pt-1">
       <div>
-        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">100% Working Hits</span>
-        <h1 class="text-xl font-black text-white">Arijit Music Hub</h1>
+        <span class="text-[10px] uppercase tracking-widest text-emerald-400 font-bold">5+ Hours Non-Stop</span>
+        <h1 class="text-xl font-black text-white">Arijit 70 Super Hits</h1>
       </div>
-      <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full font-semibold">
-        <i class="fa-solid fa-music mr-1"></i> Live
+      <span class="text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full font-medium flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Mega Jukebox
       </span>
     </div>
 
-    <!-- Active Video / Album Visual Player -->
+    <!-- Video Player Screen -->
     <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-black">
       <div id="youtube-player" class="w-full h-full"></div>
     </div>
 
-    <!-- Now Playing Details -->
+    <!-- Track Information -->
     <div class="flex justify-between items-center px-1">
       <div class="truncate">
-        <h2 id="track-title" class="text-lg font-bold truncate text-white">Tum Hi Ho</h2>
-        <p id="track-artist" class="text-xs text-slate-400 truncate">Aashiqui 2 • Arijit Singh</p>
+        <h2 id="track-title" class="text-lg font-bold truncate text-white">Arijit Singh Specials</h2>
+        <p class="text-xs text-slate-400">Zee Music Company • 70 Hit Songs Non-Stop</p>
       </div>
-      <div class="text-xs text-emerald-400 font-medium tracking-wide">Arijit Special</div>
+      <div class="text-xs text-emerald-400 font-semibold bg-slate-900 border border-slate-700/80 px-2.5 py-1 rounded-lg">
+        5h 13m
+      </div>
     </div>
 
-    <!-- Controls -->
-    <div class="flex items-center justify-center gap-7 my-1">
-      <button onclick="prevSong()" class="p-3 text-slate-400 hover:text-white transition active:scale-90">
-        <i class="fa-solid fa-backward-step text-2xl"></i>
+    <!-- Music Controls -->
+    <div class="flex items-center justify-center gap-8 my-2">
+      <!-- 10 Sec Backward -->
+      <button onclick="seekBackward()" title="-10s" class="p-3 text-slate-400 hover:text-white transition active:scale-90">
+        <i class="fa-solid fa-rotate-left text-2xl"></i>
       </button>
 
+      <!-- Main Play/Pause Button -->
       <button id="play-btn" onclick="togglePlay()" class="w-16 h-16 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-lg shadow-emerald-500/30 transition transform active:scale-95">
         <i id="play-icon" class="fa-solid fa-play text-2xl ml-1"></i>
       </button>
 
-      <button onclick="nextSong()" class="p-3 text-slate-400 hover:text-white transition active:scale-90">
-        <i class="fa-solid fa-forward-step text-2xl"></i>
+      <!-- 10 Sec Forward -->
+      <button onclick="seekForward()" title="+10s" class="p-3 text-slate-400 hover:text-white transition active:scale-90">
+        <i class="fa-solid fa-rotate-right text-2xl"></i>
       </button>
     </div>
 
-    <!-- Search Bar -->
-    <div class="relative">
-      <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-      <input type="text" id="search-box" oninput="filterSongs()" placeholder="Gaana ya movie search karein..." 
-        class="w-full bg-slate-900 border border-slate-700/80 rounded-xl py-2 pl-9 pr-3 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition" />
+    <!-- Quick Songs Chapters / Fast Skip -->
+    <div class="flex flex-col gap-2">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-1">Popular Jumps</span>
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <button onclick="jumpTo(21)" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left p-2.5 rounded-xl truncate transition">
+          <span class="text-emerald-400 font-bold block text-[10px]">00:21</span>
+          <span class="text-white truncate">Apna Bana Le</span>
+        </button>
+        <button onclick="jumpTo(977)" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left p-2.5 rounded-xl truncate transition">
+          <span class="text-emerald-400 font-bold block text-[10px]">16:17</span>
+          <span class="text-white truncate">Phir Bhi Tumko</span>
+        </button>
+        <button onclick="jumpTo(1639)" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left p-2.5 rounded-xl truncate transition">
+          <span class="text-emerald-400 font-bold block text-[10px]">27:19</span>
+          <span class="text-white truncate">Zaalima</span>
+        </button>
+        <button onclick="jumpTo(1925)" class="bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left p-2.5 rounded-xl truncate transition">
+          <span class="text-emerald-400 font-bold block text-[10px]">32:05</span>
+          <span class="text-white truncate">Pal Pal Dil Ke Paas</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Playlist Section -->
-    <div class="flex flex-col gap-2">
-      <div class="flex justify-between items-center text-xs text-slate-400 font-semibold uppercase px-1">
-        <span>Arijit Songs Collection (<span id="total-songs">0</span>)</span>
-      </div>
-      <div id="playlist" class="flex flex-col gap-2 max-h-56 overflow-y-auto pr-1"></div>
-    </div>
   </div>
 
+  <!-- YouTube IFrame API Script -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    // 50+ Guaranteed Working Hits of Arijit Singh
-    const songs = [
-      { title: "Tum Hi Ho", movie: "Aashiqui 2", ytId: "Umqb9KENgmk" },
-      { title: "Kesariya", movie: "Brahmastra", ytId: "BddP6PYo2gs" },
-      { title: "Channa Mereya", movie: "Ae Dil Hai Mushkil", ytId: "284Ov7ysmfA" },
-      { title: "Satranga", movie: "Animal", ytId: "HR5e0O8b5wE" },
-      { title: "Chaleya", movie: "Jawan", ytId: "VAdGW7QDJUI" },
-      { title: "Agar Tum Saath Ho", movie: "Tamasha", ytId: "sK7riqg2mr4" },
-      { title: "O Bedardeya", movie: "Tu Jhoothi Main Makkaar", ytId: "YxWlaYCA8MU" },
-      { title: "Shayad", movie: "Love Aaj Kal", ytId: "vquL7w5Ua-Y" },
-      { title: "Apna Bana Le", movie: "Bhediya", ytId: "ElZfdU54Cp8" },
-      { title: "Heeriye", movie: "Album Track", ytId: "RLzC55aiAoY" },
-      { title: "Sajni", movie: "Laapataa Ladies", ytId: "k3g_WjLCs6I" },
-      { title: "O Maahi", movie: "Dunki", ytId: "f_b_jP5_v8Q" },
-      { title: "Lutt Putt Gaya", movie: "Dunki", ytId: "edgyp_0_nUQ" },
-      { title: "Ae Dil Hai Mushkil", movie: "Ae Dil Hai Mushkil", ytId: "6FURuLYrR_Q" },
-      { title: "Hawayein", movie: "Jab Harry Met Sejal", ytId: "cdybfl7gW9Y" },
-      { title: "Gerua", movie: "Dilwale", ytId: "AEIVhBS6baE" },
-      { title: "Zaalima", movie: "Raees", ytId: "lpdRqn6xwiM" },
-      { title: "Hamari Adhuri Kahani", movie: "Hamari Adhuri Kahani", ytId: "fgTG_H6f9g4" },
-      { title: "Muskurane", movie: "Citylights", ytId: "0-7I_yE74y8" },
-      { title: "Kalank Title Track", movie: "Kalank", ytId: "Grr0Exhy-lQ" },
-      { title: "Tera Yaar Hoon Main", movie: "Sonu Ke Titu Ki Sweety", ytId: "E4i3bAtEuJE" },
-      { title: "Soch Na Sake", movie: "Airlift", ytId: "OJvy_kWmE0U" },
-      { title: "Phir Bhi Tumko Chaahunga", movie: "Half Girlfriend", ytId: "_iktURkE530" },
-      { title: "Enna Sona", movie: "OK Jaanu", ytId: "spffc8m57lY" },
-      { title: "Khairiyat", movie: "Chhichhore", ytId: "hoNb6HuNmU0" },
-      { title: "Mast Magan", movie: "2 States", ytId: "xdp034bT8ls" },
-      { title: "Ilahi", movie: "Yeh Jawaani Hai Deewani", ytId: "fdubeMFwuGs" },
-      { title: "Ve Kamleya", movie: "Rocky Aur Rani", ytId: "bCuhuejm8Zw" },
-      { title: "Raabta", movie: "Agent Vinod", ytId: "z-diRlyLGgg" },
-      { title: "Naina", movie: "Dangal", ytId: "1e3_hE3aZfU" },
-      { title: "Tujhe Kitna Chahne Lage", movie: "Kabir Singh", ytId: "AFmzV6L6pCE" },
-      { title: "Bekhayali", movie: "Kabir Singh", ytId: "24930-vN_Uo" },
-      { title: "Ruaan", movie: "Tiger 3", ytId: "r2YwN6r30g8" },
-      { title: "Galti Se Mistake", movie: "Jagga Jasoos", ytId: "05TA9jNnCdU" },
-      { title: "Ullu Ka Pattha", movie: "Jagga Jasoos", ytId: "P_zB2O8c8Y4" },
-      { title: "Suno Na Sangemarmar", movie: "Youngistaan", ytId: "1K006FzU1l0" },
-      { title: "Saware", movie: "Phantom", ytId: "K_sO8_y97Zk" },
-      { title: "Laal Ishq", movie: "Ram-Leela", ytId: "Pycy_kvS744" },
-      { title: "Aayat", movie: "Bajirao Mastani", ytId: "0vS4b61N-F8" },
-      { title: "Darkhaast", movie: "Shivaay", ytId: "5vU3-gP6k5U" },
-      { title: "Baatein Ye Kabhi Na", movie: "Khamoshiyan", ytId: "j6fHk8_4qfM" },
-      { title: "Khamoshiyan", movie: "Khamoshiyan", ytId: "Mv3SZDP7QUo" },
-      { title: "Samjhawan", movie: "Humpty Sharma Ki Dulhania", ytId: "H2f7MZUevrA" },
-      { title: "Pal", movie: "Jalebi", ytId: "a_pB0H_lU1A" },
-      { title: "Duaa", movie: "Shanghai", ytId: "hQ_Yy7G3jR0" },
-      { title: "Phir Le Aya Dil", movie: "Barfi!", ytId: "aU_17-K-J_U" },
-      { title: "Bolna", movie: "Kapoor & Sons", ytId: "4_8Z8-q_wL0" },
-      { title: "Nashe Si Chadh Gayi", movie: "Befikre", ytId: "Wd2B8OAOtU8" },
-      { title: "Zindagi Kuch Toh Bata", movie: "Bajrangi Bhaijaan", ytId: "m1l7-c5q82Y" },
-      { title: "Tera Hoke Rahoon", movie: "Behen Hogi Teri", ytId: "6z5F_q4b5kI" },
-      { title: "Dil Sambhal Ja Zara", movie: "Murder 2", ytId: "6Fk-H7mF_y8" }
-    ];
-
-    let currentTrackIndex = 0;
+    const VIDEO_ID = 'HB8HnAA_G2k'; // Arijit Singh 70 Super Hits Video
     let player;
     let isPlaying = false;
-    let filteredList = [...songs];
-
-    document.getElementById('total-songs').innerText = songs.length;
 
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('youtube-player', {
         width: '100%',
         height: '100%',
-        videoId: songs[currentTrackIndex].ytId,
-        playerVars: { 
+        videoId: VIDEO_ID,
+        playerVars: {
           autoplay: 0,
-          playsinline: 1, 
-          controls: 0,
+          playsinline: 1,
+          controls: 1, // Video timeline aur default controls enable
           modestbranding: 1,
           rel: 0
         },
         events: {
-          'onStateChange': onPlayerStateChange,
-          'onError': onPlayerError
+          'onStateChange': onPlayerStateChange
         }
       });
-      renderPlaylist();
-      updateTrackUI();
     }
 
     function onPlayerStateChange(event) {
@@ -163,90 +118,10 @@
       } else if (event.data === YT.PlayerState.PAUSED) {
         isPlaying = false;
         updatePlayBtn();
-      } else if (event.data === YT.PlayerState.ENDED) {
-        nextSong();
       }
-    }
-
-    function onPlayerError() {
-      // Agar kisi wajah se koi track skip ho toh agla track automatically chalu ho jaye
-      nextSong();
-    }
-
-    function loadTrack(index) {
-      currentTrackIndex = index;
-      updateTrackUI();
-      if (player && player.loadVideoById) {
-        player.loadVideoById(songs[currentTrackIndex].ytId);
-        isPlaying = true;
-        updatePlayBtn();
-      }
-      renderPlaylist();
     }
 
     function togglePlay() {
       if (!player) return;
       if (isPlaying) {
-        player.pauseVideo();
-      } else {
-        player.playVideo();
-      }
-    }
-
-    function nextSong() {
-      currentTrackIndex = (currentTrackIndex + 1) % songs.length;
-      loadTrack(currentTrackIndex);
-    }
-
-    function prevSong() {
-      currentTrackIndex = (currentTrackIndex - 1 + songs.length) % songs.length;
-      loadTrack(currentTrackIndex);
-    }
-
-    function updateTrackUI() {
-      const song = songs[currentTrackIndex];
-      document.getElementById('track-title').innerText = song.title;
-      document.getElementById('track-artist').innerText = `${song.movie} • Arijit Singh`;
-    }
-
-    function updatePlayBtn() {
-      const icon = document.getElementById('play-icon');
-      if (isPlaying) {
-        icon.className = "fa-solid fa-pause text-2xl";
-      } else {
-        icon.className = "fa-solid fa-play text-2xl ml-1";
-      }
-    }
-
-    function filterSongs() {
-      const query = document.getElementById('search-box').value.toLowerCase();
-      filteredList = songs.filter(s => 
-        s.title.toLowerCase().includes(query) || s.movie.toLowerCase().includes(query)
-      );
-      renderPlaylist();
-    }
-
-    function renderPlaylist() {
-      const listContainer = document.getElementById('playlist');
-      listContainer.innerHTML = '';
-      
-      filteredList.forEach((song) => {
-        const originalIndex = songs.findIndex(s => s.ytId === song.ytId);
-        const isActive = originalIndex === currentTrackIndex;
-        const item = document.createElement('div');
-        item.className = `flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition ${isActive ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' : 'hover:bg-slate-800/60 text-slate-300'}`;
-        item.onclick = () => loadTrack(originalIndex);
-        item.innerHTML = `
-          <img src="https://img.youtube.com/vi/${song.ytId}/hqdefault.jpg" class="w-10 h-10 rounded-lg object-cover shadow" />
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold truncate ${isActive ? 'text-emerald-300' : 'text-white'}">${song.title}</p>
-            <p class="text-xs text-slate-400 truncate">${song.movie}</p>
-          </div>
-          ${isActive ? '<i class="fa-solid fa-volume-high text-xs text-emerald-400"></i>' : ''}
-        `;
-        listContainer.appendChild(item);
-      });
-    }
-  </script>
-</body>
-</html>
+        
